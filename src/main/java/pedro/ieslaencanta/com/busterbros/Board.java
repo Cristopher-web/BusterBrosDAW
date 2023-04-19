@@ -272,6 +272,11 @@ public class Board implements IKeyListener {
         if (this.actual_level >= this.levels.length) {
             this.actual_level = 0;
         }
+        if(this.backgroundsound != null){
+            this.backgroundsound.stop();
+        }
+        this.backgroundsound=Resources.getInstance().getSound("fondo");
+        this.backgroundsound.play();
         this.levels[this.actual_level].analyze();
         this.createElementsLevel();
 
