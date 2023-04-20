@@ -12,6 +12,15 @@ import pedro.ieslaencanta.com.busterbros.basic.interfaces.IColidable;
  * @author DAWTarde
  */
 public class ElementDinamic extends Element implements IColidable {
+   
+    public ElementDinamic() { 
+    }
+
+    public ElementDinamic(double x, double y, double width, double height) {
+        super(x, y, width, height);  
+    }
+
+
 
     @Override
     public Optional<Collision> Collision(Element e) {

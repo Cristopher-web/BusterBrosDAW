@@ -16,8 +16,10 @@ import javafx.util.Pair;
 import pedro.ieslaencanta.com.busterbros.basic.Brick;
 import pedro.ieslaencanta.com.busterbros.basic.Brickbreakeable;
 import pedro.ieslaencanta.com.busterbros.basic.Element;
+import pedro.ieslaencanta.com.busterbros.basic.ElementMovable;
 import pedro.ieslaencanta.com.busterbros.basic.Ladder;
 import pedro.ieslaencanta.com.busterbros.basic.Level;
+import pedro.ieslaencanta.com.busterbros.basic.interfaces.IMovable;
 
 ;
 
@@ -43,6 +45,7 @@ public class Board implements IKeyListener {
     private int actual_level = -1;
     private MediaPlayer backgroundsound;
     private Element[] elements;
+    private ElementMovable jugador;
 
     public Board(Dimension2D original) {
         this.gc = null;
@@ -59,6 +62,8 @@ public class Board implements IKeyListener {
 
         this.createLevels();
         this.nextLevel();
+        
+        this.jugador = new ElementMovable(2,2,50,50,32,32);
 
     }
 
@@ -91,6 +96,7 @@ public class Board implements IKeyListener {
         Brick tempo;
         Brickbreakeable rompe;
         Ladder escalera;
+        ElementMovable m;
         Pair<Level.ElementType, Rectangle2D>[] fi = this.levels[this.actual_level].getFigures();
         this.elements = new Element[fi.length];
         for (int i = 0; i < fi.length; i++) {
@@ -160,7 +166,11 @@ public class Board implements IKeyListener {
     }
 
     private void update() {
-
+        for(int i = 0; i<this.elements.length;i++){
+            if(this.elements[i] != null && this.elements[i] instanceof IMovable){
+                ((ElementMovable)this.elements[i]).move(2, 0);
+            }
+        }
     }
 
     private void evalCollisions() {
@@ -175,18 +185,29 @@ public class Board implements IKeyListener {
                 this.elements[i].paint(gc);
             }
         }
-
+        this.jugador.paint(gc);
+        this.jugador.setColor(Color.GOLD);
     }
 
     private void process_input() {
 
         if (this.left_press) {
-
+            this.jugador.moveLeft();
+            
         } else if (this.right_press) {
+            this.jugador.moveRight();
         }
         if (this.up_press) {
+            this.jugador.moveUp();
+            if(this.jugador.isInBorder(game_zone)==IMovable.BorderCollision.TOP){
+                this.jugador.setPosition(this.jugador.getRectangle().getMinX(),this.game_zone.getMinY());
+            }
         }
         if (this.down_press) {
+            this.jugador.moveDown();
+            if(this.jugador.isInBorder(game_zone)==IMovable.BorderCollision.DOWN){
+                  this.jugador.setPosition(this.jugador.getRectangle().getMinX(),this.game_zone.getMaxY() - this.jugador.getRectangle().getHeight());
+            }
         }
 
     }

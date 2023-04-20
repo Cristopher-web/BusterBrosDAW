@@ -4,14 +4,25 @@
  */
 package pedro.ieslaencanta.com.busterbros.basic.interfaces;
 
+import javafx.geometry.Rectangle2D;
+
 /**
  *
  * @author DAWTarde
  */
 public interface IMovable {
+    public enum BorderCollision{
+        LEFT,
+        RIGHT,
+        TOP,
+        DOWN,
+        NONE
+    }
+    public BorderCollision isInBorder(Rectangle2D borde);
     public void move(double x,double y);
     public void moveLeft();
     public void moveLeft(double inc);
+    public void moveRight();
     public void moveRight(double inc);
     public void moveUp();
     public void moveUp(double inc);
