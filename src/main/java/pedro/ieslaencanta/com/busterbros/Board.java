@@ -164,12 +164,34 @@ public class Board implements IKeyListener {
 
         //actualizar
     }
-
+    public void setDebug(){
+        this.debug=!this.debug;
+        this.jugador.setDebug(debug);
+        for(int i = 0;i < this.elements.length; i++){
+            this.elements[i].setDebug(debug);
+        }
+    }
     private void update() {
         for(int i = 0; i<this.elements.length;i++){
             if(this.elements[i] != null && this.elements[i] instanceof IMovable){
                 ((ElementMovable)this.elements[i]).move(2, 0);
             }
+        }
+        this.jugador.move();
+        IMovable.BorderCollision b = this.jugador.isInBorder(game_zone);
+        switch(b){
+            case DOWN:
+                this.jugador.setVy(-Math.abs(this.jugador.getVy()));
+                break;
+            case TOP:
+                 this.jugador.setVy(Math.abs(this.jugador.getVy()));
+                break;
+            case LEFT:
+                 this.jugador.setVx(Math.abs(this.jugador.getVx()));
+                 break;
+            case RIGHT:
+                this.jugador.setVx(-Math.abs(this.jugador.getVx()));
+                break;
         }
     }
 
@@ -193,9 +215,16 @@ public class Board implements IKeyListener {
 
         if (this.left_press) {
             this.jugador.moveLeft();
+             if(this.jugador.isInBorder(game_zone)==IMovable.BorderCollision.LEFT){
+                this.jugador.setPosition(this.game_zone.getMinX(), this.jugador.getRectangle().getMinY());
+            }
             
         } else if (this.right_press) {
             this.jugador.moveRight();
+               if(this.jugador.isInBorder(game_zone)==IMovable.BorderCollision.RIGHT){
+                this.jugador.setPosition(this.game_zone.getMaxX() - this.jugador.getRectangle().getWidth(),
+                        this.jugador.getRectangle().getMinY());
+            }
         }
         if (this.up_press) {
             this.jugador.moveUp();
@@ -279,7 +308,9 @@ public class Board implements IKeyListener {
             case DOWN:
                 this.down_press = false;
                 break;
-
+            case D:
+                this.setDebug();
+                break;
             case N:
                 this.nextLevel();
                 break;

@@ -20,6 +20,7 @@ public interface IMovable {
     }
     public BorderCollision isInBorder(Rectangle2D borde);
     public void move(double x,double y);
+    public void move();
     public void moveLeft();
     public void moveLeft(double inc);
     public void moveRight();

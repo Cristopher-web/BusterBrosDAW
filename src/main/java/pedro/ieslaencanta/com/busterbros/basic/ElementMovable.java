@@ -31,6 +31,10 @@ public class ElementMovable extends ElementDinamic implements IMovable{
             collision=BorderCollision.TOP;
         }else if(this.rectangle.getMaxY()>borde.getMaxY()){
             collision = BorderCollision.DOWN;
+        }else if(this.rectangle.getMinX() < borde.getMinX()){
+            collision = BorderCollision.LEFT;
+        }else if(this.rectangle.getMaxX() > borde.getMaxX()){
+            collision = BorderCollision.RIGHT;
         }
         return collision;
     }
@@ -39,6 +43,14 @@ public class ElementMovable extends ElementDinamic implements IMovable{
     public void move(double x, double y) {
             this.rectangle= new Rectangle2D(this.rectangle.getMinX() + x,
                                             this.rectangle.getMinY() + y,
+                                            this.rectangle.getWidth(),
+                                            this.rectangle.getHeight());
+    }
+    
+    @Override
+    public void move() {
+        this.rectangle= new Rectangle2D(this.rectangle.getMinX() + vx,
+                                            this.rectangle.getMinY() + vy,
                                             this.rectangle.getWidth(),
                                             this.rectangle.getHeight());
     }
@@ -120,7 +132,21 @@ public class ElementMovable extends ElementDinamic implements IMovable{
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-  
- 
+    public double getVx() {
+        return vx;
+    }
+
+    public void setVx(double vx) {
+        this.vx = vx;
+    }
+
+    public double getVy() {
+        return vy;
+    }
+
+    public void setVy(double vy) {
+        this.vy = vy;
+    }    
+
     
 }
