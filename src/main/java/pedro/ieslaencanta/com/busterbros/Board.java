@@ -13,13 +13,19 @@ import static javafx.scene.input.KeyCode.UP;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
+import pedro.ieslaencanta.com.busterbros.basic.Ball;
 import pedro.ieslaencanta.com.busterbros.basic.Brick;
 import pedro.ieslaencanta.com.busterbros.basic.Brickbreakeable;
 import pedro.ieslaencanta.com.busterbros.basic.Element;
 import pedro.ieslaencanta.com.busterbros.basic.ElementMovable;
+import pedro.ieslaencanta.com.busterbros.basic.ElementWithGravity;
 import pedro.ieslaencanta.com.busterbros.basic.Ladder;
 import pedro.ieslaencanta.com.busterbros.basic.Level;
 import pedro.ieslaencanta.com.busterbros.basic.interfaces.IMovable;
+import static pedro.ieslaencanta.com.busterbros.basic.interfaces.IMovable.BorderCollision.DOWN;
+import static pedro.ieslaencanta.com.busterbros.basic.interfaces.IMovable.BorderCollision.LEFT;
+import static pedro.ieslaencanta.com.busterbros.basic.interfaces.IMovable.BorderCollision.RIGHT;
+import static pedro.ieslaencanta.com.busterbros.basic.interfaces.IMovable.BorderCollision.TOP;
 
 ;
 
@@ -45,7 +51,8 @@ public class Board implements IKeyListener {
     private int actual_level = -1;
     private MediaPlayer backgroundsound;
     private Element[] elements;
-    private ElementMovable jugador;
+    private ElementWithGravity jugador;
+    private ElementWithGravity bola;
 
     public Board(Dimension2D original) {
         this.gc = null;
@@ -63,9 +70,9 @@ public class Board implements IKeyListener {
         this.createLevels();
         this.nextLevel();
         
-        this.jugador = new ElementMovable(2,2,50,50,32,32);
-
-    }
+        this.jugador = new ElementWithGravity(0,2,false,true,2,2,50,50,32,32);
+        this.bola = new ElementWithGravity(0,0.4,true,true,2,2,30,30,10,10);
+        }
 
     private void createLevels() {
         int y = 44;
@@ -96,7 +103,7 @@ public class Board implements IKeyListener {
         Brick tempo;
         Brickbreakeable rompe;
         Ladder escalera;
-        ElementMovable m;
+        ElementWithGravity m;
         Pair<Level.ElementType, Rectangle2D>[] fi = this.levels[this.actual_level].getFigures();
         this.elements = new Element[fi.length];
         for (int i = 0; i < fi.length; i++) {
@@ -152,6 +159,8 @@ public class Board implements IKeyListener {
         this.bggc = gc;
         this.paintBackground();
     }
+    
+    
 
     /**
      * cuando se produce un evento
@@ -171,30 +180,38 @@ public class Board implements IKeyListener {
             this.elements[i].setDebug(debug);
         }
     }
+    
+    private void evalBorder(ElementMovable e){
+        e.move();
+        IMovable.BorderCollision b = e.isInBorder(game_zone);
+        switch(b){
+            case DOWN:
+                e.setVy(-Math.abs(e.getVy()));
+                e.setPosition(e.getRectangle().getMinX(),this.game_zone.getMaxY() - e.getRectangle().getHeight());
+                break;
+            case TOP:
+                 e.setVy(Math.abs(e.getVy()));
+                break;
+            case LEFT:
+                 e.setVx(Math.abs(e.getVx()));
+                 break;
+            case RIGHT:
+                e.setVx(-Math.abs(e.getVx()));
+                break;
+            }
+    }
+    
     private void update() {
-        for(int i = 0; i<this.elements.length;i++){
+       /* for(int i = 0; i<this.elements.length;i++){
             if(this.elements[i] != null && this.elements[i] instanceof IMovable){
                 ((ElementMovable)this.elements[i]).move(2, 0);
             }
-        }
-        this.jugador.move();
-        IMovable.BorderCollision b = this.jugador.isInBorder(game_zone);
-        switch(b){
-            case DOWN:
-                this.jugador.setVy(-Math.abs(this.jugador.getVy()));
-                break;
-            case TOP:
-                 this.jugador.setVy(Math.abs(this.jugador.getVy()));
-                break;
-            case LEFT:
-                 this.jugador.setVx(Math.abs(this.jugador.getVx()));
-                 break;
-            case RIGHT:
-                this.jugador.setVx(-Math.abs(this.jugador.getVx()));
-                break;
-        }
+        }*/
+        this.evalBorder(bola);
+        /*for(int i = 0; i < this.balls.leght; i++){
+            this.evalBorder()
+        }*/
     }
-
     private void evalCollisions() {
 
     }
@@ -209,6 +226,8 @@ public class Board implements IKeyListener {
         }
         this.jugador.paint(gc);
         this.jugador.setColor(Color.GOLD);
+        this.bola.paint(gc);
+        this.bola.setColor(Color.ALICEBLUE);
     }
 
     private void process_input() {
